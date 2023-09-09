@@ -12,7 +12,7 @@ RESET='\033[0m'
 # Print banner
 echo -e "${RED}=======================================${RESET}"
 echo -e "${RED}V${GREEN}I${YELLOW}D${BLUE}E${PURPLE}O ${CYAN}D${WHITE}O${RESET}W${RED}N${GREEN}L${YELLOW}O${BLUE}A${PURPLE}D${CYAN}E${WHITE}R${RESET}"
-echo -e"${RED}=======================================${RESET}"
+echo -e "${RED}=======================================${RESET}"
 
 # Function to download video using wget
 download_video() {
