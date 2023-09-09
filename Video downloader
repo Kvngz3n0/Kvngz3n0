@@ -1,0 +1,38 @@
+#!/bin/bash
+# Function to display a menu and get user's choice
+show_menu() {
+echo "======================================="
+echo " VIDEO DOWNLOADER "
+echo "======================================="
+echo "1. Download video in 1080p"
+echo "2. Download video in 720p"
+echo "3. Download video in 480p"
+echo "4. Download video in 360p"
+echo "5. Quit"
+echo "======================================="
+read -p "Enter your choice [1-5]: " choice
+case $choice in
+1) download_video "1080p" ;;
+2) download_video "720p" ;;
+3) download_video "480p" ;;
+4) download_video "360p" ;;
+5) exit ;;
+*) show_menu ;;
+esac
+}
+# Function to download video in the specified resolution
+download_video() {
+resolution=$1
+read -p "Enter the video URL: " url
+filename=$(wget -q --show-progress --no-check-certificate --user-agent='Mozilla/5.0' "$url" -O - | grep -oP '"videoDetails":{"title":"\K[^"]+' | tr ' ' '_')
+echo "Downloading video in $resolution..."
+if wget -q --show-progress --no-check-certificate --user-agent='Mozilla/5.0' -O "$filename.$resolution.mp4" "$url"; then
+echo "Video downloaded successfully!"
+else
+echo "Failed to download video."
+fi
+}
+# Main script
+while true; do
+show_menu
+done
