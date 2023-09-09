@@ -1,38 +1,46 @@
 #!/bin/bash
-# Function to display a menu and get user's choice
-show_menu() {
-echo "======================================="
-echo " VIDEO DOWNLOADER "
-echo "======================================="
-echo "1. Download video in 1080p"
-echo "2. Download video in 720p"
-echo "3. Download video in 480p"
-echo "4. Download video in 360p"
-echo "5. Quit"
-echo "======================================="
-read -p "Enter your choice [1-5]: " choice
-case $choice in
-1) download_video "1080p" ;;
-2) download_video "720p" ;;
-3) download_video "480p" ;;
-4) download_video "360p" ;;
-5) exit ;;
-*) show_menu ;;
-esac
-}
-# Function to download video in the specified resolution
+
+# Define colors
+GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
+BLUE='\033[0;34m'
+PURPLE='\033[0;35m'
+CYAN='\033[0;36m'
+WHITE='\033[0;37m'
+RESET='\033[0m'
+
+# Print banner
+echo -e "${RED}=======================================${RESET}"
+echo -e "${RED}V${GREEN}I${YELLOW}D${BLUE}E${PURPLE}O ${CYAN}D${WHITE}O${RESET}W${RED}N${GREEN}>"
+echo -e"${RED}=======================================${RESET}"
+
+# Function to download video using wget
 download_video() {
-resolution=$1
-read -p "Enter the video URL: " url
-filename=$(wget -q --show-progress --no-check-certificate --user-agent='Mozilla/5.0' "$url" -O - | grep -oP '"videoDetails":{"title":"\K[^"]+' | tr ' ' '_')
-echo "Downloading video in $resolution..."
-if wget -q --show-progress --no-check-certificate --user-agent='Mozilla/5.0' -O "$filename.$resolution.mp4" "$url"; then
-echo "Video downloaded successfully!"
-else
-echo "Failed to download video."
-fi
+local url="$1"
+local filename="$2"
+
+# Download video using wget
+wget -O "$filename" "$url"
 }
-# Main script
-while true; do
-show_menu
-done
+
+# Function to display video format options
+display_formats() {
+local url="$1"
+
+# Fetch video format options using wget
+wget -q -O - "$url" | grep "itag\|quality_label" | awk -F '[:"]' '{printf "%s: %s\n $4 $8}'
+}
+
+# Main script starts here echo "Enter the URL of the video:"
+read video_url
+
+echo "Fetching available video formats..."
+display_formats "$video_url"
+
+echo "Enter the format code of the video you want to download:" read format_code
+echo "Enter the desired filename (including extension):"
+read filename
+
+echo "Downloading video..."
+download_video "${video_url}&itag=${format_code}" "$filename" 
+echo "Video downloaded successfully!"
